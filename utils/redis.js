@@ -1,3 +1,7 @@
+if (typeof globalThis.fetch === 'undefined') {
+  globalThis.fetch = require('node-fetch');
+}
+
 const { Redis } = require("@upstash/redis");
 const client = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,

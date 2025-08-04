@@ -27,7 +27,8 @@
     "mongoose": "^8.0.3",
     "openai": "^4.20.1",
     "twilio": "^4.19.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "node-fetch": "^2.7.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
