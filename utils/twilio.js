@@ -1,4 +1,4 @@
-const twilio = require('twilio');
+const twilio = require("twilio");
 
 const twilioClient = twilio(
   process.env.TWILIO_ACCOUNT_SID,
@@ -11,21 +11,19 @@ function getMessageBody(otp) {
 
 async function sendOTP(formattedPhoneNumber, otp) {
   try {
-    console.log(`(${formattedPhoneNumber}) ` + getMessageBody(otp));
-
     await twilioClient.messages.create({
       to: formattedPhoneNumber,
       forceDelivery: true,
       messagingServiceSid:
         process.env.TWILIO_MESSAGING_SERVICE_SID ||
-        'MG031243d9eeffbfd741030c874a859840',
-      from: process.env.TWILIO_MESSAGING_FROM || '+16166121952',
+        "MG031243d9eeffbfd741030c874a859840",
+      from: process.env.TWILIO_MESSAGING_FROM || "+16166121952",
       body: getMessageBody(otp),
     });
 
     return true;
   } catch (error) {
-    console.error('Twilio sendOTP error:', error);
+    console.error("Twilio sendOTP error:", error);
     return false;
   }
 }
@@ -37,5 +35,5 @@ function generateOTP() {
 module.exports = {
   sendOTP,
   generateOTP,
-  getMessageBody
-}; 
+  getMessageBody,
+};

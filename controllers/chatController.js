@@ -70,7 +70,13 @@ const sendMessage = async (req, res) => {
         userId: user._id,
         doctorType,
         systemPrompt: SYSTEM_PROMPTS[doctorType],
-        messages: [],
+        messages: [
+          {
+            sender: user._id,
+            content: "जी कैसे हो आप? मुझे बताइए क्या दिक्कत आपको?",
+            isAIResponse: true,
+          },
+        ],
         isActive: true,
       });
     }
@@ -121,9 +127,9 @@ const sendMessage = async (req, res) => {
     if (isNewUser) {
       res.write(`TOKEN:${jwtToken}\n`);
     }
-    const aiMessage = chat.messages.filter(
-      (msg) => msg.isAIResponse && msg.content
-    ).pop();
+    const aiMessage = chat.messages
+      .filter((msg) => msg.isAIResponse && msg.content)
+      .pop();
     if (aiMessage) {
       res.write(aiMessage.content);
     }
@@ -146,10 +152,24 @@ const getChats = async (req, res) => {
     const token = extractTokenFromHeader(req);
 
     if (!token) {
-      return res.status(401).json({
-        success: false,
-        message: "Token required",
-      });
+      const defaultChat = {
+        _id: "default_chat",
+        title: `Chat with ${doctorType.replace("_", " ")}`,
+        userId: uuidv4(),
+        doctorType: doctorType,
+        messages: [
+          {
+            sender: uuidv4(),
+            content: "जी कैसे हो आप? मुझे बताइए क्या दिक्कत आपको?",
+            isAIResponse: true,
+            createdAt: new Date(),
+          },
+        ],
+        lastMessage: new Date(),
+        createdAt: new Date(),
+        isActive: true,
+      };
+      return res.status(200).json([defaultChat]);
     }
 
     const decoded = verifyToken(token);
@@ -173,6 +193,27 @@ const getChats = async (req, res) => {
       doctorType,
       isActive: true,
     }).sort({ lastMessage: -1 });
+
+    if (chats.length === 0) {
+      const defaultChat = {
+        _id: "default_chat",
+        title: `Chat with ${doctorType.replace("_", " ")}`,
+        userId: uuidv4(),
+        doctorType: doctorType,
+        messages: [
+          {
+            sender: uuidv4(),
+            content: "जी कैसे हो आप? मुझे बताइए क्या दिक्कत आपको?",
+            isAIResponse: true,
+            createdAt: new Date(),
+          },
+        ],
+        lastMessage: new Date(),
+        createdAt: new Date(),
+        isActive: true,
+      };
+      return res.status(200).json([defaultChat]);
+    }
 
     res.status(200).json(chats);
   } catch (error) {
@@ -278,7 +319,6 @@ const verifyOTP = async (req, res) => {
 
     // Verify OTP
     const storedOTP = await getOTP(formattedPhone);
-    console.log(storedOTP, otp);
     if (!storedOTP || storedOTP.toString() !== otp.toString()) {
       return res.status(400).json({
         success: false,
