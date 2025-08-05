@@ -20,7 +20,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // API routes
 app.use('/api/chat', chatRoutes);
-
+app.use('/',(req,res)=>{
+  res.send('Hello World');
+})
 // 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({
