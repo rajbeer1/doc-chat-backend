@@ -1,6 +1,6 @@
 const Mixpanel = require('mixpanel');
 
-const mixpanelClient = Mixpanel.init(process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null, {
+const mixpanelClient = Mixpanel.init(process.env.MIXPANEL_TOKEN , {
   host: 'https://api-eu.mixpanel.com'
 });
 const sendChatData = (userId, phoneNumber, userMessage, aiResponse, doctorType) => {
