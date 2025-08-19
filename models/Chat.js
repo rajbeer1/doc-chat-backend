@@ -33,7 +33,7 @@ const chatSchema = new mongoose.Schema({
   },
   doctorType: {
     type: String,
-    enum: ['gynecologist', 'general_practitioner'],
+    enum: ['pregnancy_coach', 'health_coach'],
     required: true
   },
   messages: [messageSchema],

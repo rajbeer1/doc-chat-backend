@@ -9,6 +9,9 @@ const { generateResponse, SYSTEM_PROMPTS } = require("../utils/openai");
 const { sendOTP, generateOTP } = require("../utils/twilio");
 const { setOTP, getOTP, deleteOTP } = require("../utils/redis");
 const { v4: uuidv4 } = require("uuid");
+const {
+  sendChatData
+} = require("../utils/mixpanel");
 
 const sendMessage = async (req, res) => {
   try {
@@ -17,12 +20,12 @@ const sendMessage = async (req, res) => {
     if (
       !message ||
       !doctorType ||
-      !["gynecologist", "general_practitioner"].includes(doctorType)
+      !["pregnancy_coach", "health_coach"].includes(doctorType)
     ) {
       return res.status(400).json({
         success: false,
         message:
-          "Message and valid doctor type (gynecologist or general_practitioner) are required",
+          "Message and valid doctor type (pregnancy_coach or health_coach) are required",
       });
     }
 
@@ -104,6 +107,7 @@ const sendMessage = async (req, res) => {
 
       chat.messages.push(aiMessage);
       chat.openaiConversationId = aiResponse.conversationId;
+      sendChatData(user._id.toString(), user.phoneNumber, message, aiResponse.content, doctorType);
     } catch (aiError) {
       console.error("AI response error:", aiError);
       const errorMessage = {
