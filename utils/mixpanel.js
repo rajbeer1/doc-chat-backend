@@ -1,6 +1,6 @@
 const Mixpanel = require('mixpanel');
 
-const mixpanel = Mixpanel.init(process.env.MIXPANEL_TOKEN);
+const mixpanelClient = Mixpanel.init(process.env.MIXPANEL_TOKEN ? process.env.MIXPANEL_TOKEN : null);
 const sendChatData = (userId, phoneNumber, userMessage, aiResponse, doctorType) => {
   try {
     const eventData = {
@@ -13,7 +13,7 @@ const sendChatData = (userId, phoneNumber, userMessage, aiResponse, doctorType) 
     if (phoneNumber) {
       eventData.phone_number = phoneNumber;
     }
-   mixpanel.track('Chat Data', eventData);
+   mixpanelClient.track('Chat Data', eventData);
   } catch (error) {
     console.error('Mixpanel tracking error:', error);
   }
